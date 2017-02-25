@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #canvas {
+            /*width: 800px;
+            height: 500px;*/
+            border: 1px solid black;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="800" height="500">sorry!浏览器不支持canvas，请换高版本的浏览器！</canvas>
+<script>
+    //获取元素
+    var canvas = document.getElementById('canvas');
+    //渲染上下文
+    var ctx = canvas.getContext('2d');
+    var ary = [];
+    //创建一个球类
+    function Ball(x, y, r, color) {
+        this.x = x;
+        this.y = y;
+        this.r = r || 30;
+        this.color = color || 'rgb(' + Math.round(Math.random() * 255) + ', ' + Math.round(Math.random() * 255) + ', ' + Math.round(Math.random() * 255) + ')';
+        //改变运动方向
+        this.dx = Math.random() * 10 - 5;
+        this.dy = Math.random() * 10 - 5;
+        //改变小球大小
+        this.dr = Math.random() + 0.3;
+        //每个实例都放入到数组中
+        ary.push(this);
+    }
+    Ball.prototype = {
+        //让小球动起来
+        update: function () {
+            this.x += this.dx;
+            this.y += this.dy;
+            this.r -= this.dr;
+            if (this.r < 0) {
+                for (var i = 0; i < ary.length; i++) {
+                    if (ary[i] == this) {
+                        ary.splice(i, 1);
+                    }
+                }
+            }
+            return this;
+        },
+        //渲染小球
+        render: function () {
+            if (this.r >= 0) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, true);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+            return this;
+        }
+    }
+    ;
+    setInterval(function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (var i = 0; i < ary.length; i++) {
+            ary[i].update().render();
+        }
+    }, 20);
+    canvas.addEventListener('mousemove', function (e) {
+        //e = e || window.event;
+        new Ball(e.clientX, e.clientY);
+    })
+
+</script>
+</body>
+</html>
